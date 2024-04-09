@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from django.http import HttpResponseNotFound
+
 
 posts = [
     {
@@ -53,11 +55,12 @@ def index(request):
 
 def post_detail(request, id):
     template = 'blog/detail.html'
-    context = {'post': posts[id]}
-    for post in posts:
-        if post['id'] == id:
-            context = {'post': post}
-    return render(request, template, context)
+    try:
+        context = {'post': posts[id]}
+    except IndexError:
+        return HttpResponseNotFound('404 Страница не найдена')
+    else:
+        return render(request, template, context)
 
 
 def category_posts(request, category_slug):
